@@ -26,7 +26,8 @@
   "watch": {
     "build": {
       "patterns": [
-        "src", "test"
+        "src",
+        "test"
       ],
       "extensions": "js,jsx"
     }
