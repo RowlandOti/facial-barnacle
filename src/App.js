@@ -7,7 +7,7 @@ function App() {
   const [clientToken, setClientToken] = useState(null)
 
   useEffect(() => {
-    messagingRef.getToken({ vapidKey: 'BGF-8_Onz9vIgH5mj2HKmPWLUcX3cV9DiZEvhjO59UYxBsImQvS3ayKb3Go9gA0GhMpoU-zfPfj2GAhisKb3OIk' }).then((currentToken) => {
+    messagingRef.getToken({ vapidKey: 'BFSXKmI-qHU0VFkWKUYScibUGyfeeYzEQX28pt-ZZ-yMZYtWgdoSyxpx5XO07mGJBOqZVHL2rp4sLsxavO9v8P8' }).then((currentToken) => {
       if (currentToken) setClientToken(currentToken)
       else console.log('No registration token available. Request permission to generate one.')
     }).catch((err) => {
