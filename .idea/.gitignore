@@ -6,3 +6,8 @@
 /dataSources.local.xml
 # Editor-based HTTP Client requests
 /httpRequests/
+/facial-barnacle.iml
+/misc.xml
+/modules.xml
+/inspectionProfiles/Project_Default.xml
+/vcs.xml
