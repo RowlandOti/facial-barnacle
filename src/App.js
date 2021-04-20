@@ -1,6 +1,7 @@
 import './App.css';
 import { messagingRef, storageRef } from './init-fcm'
 import React, { useEffect, useState } from 'react'
+import { ToastProvider } from 'react-toast-notifications'
 import LoginPage from './pages/LoginPage'
 
 function App() {
@@ -16,7 +17,7 @@ function App() {
   })
 
   return (
-    <LoginPage clientToken={clientToken} />
+      <ToastProvider><LoginPage clientToken={clientToken} /></ToastProvider>
   )
 }
 

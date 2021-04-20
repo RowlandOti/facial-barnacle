@@ -1,6 +1,7 @@
 import '../App.css';
 import React, {useState} from 'react'
 import useStateWithRef from 'react-usestateref'
+import { useToasts } from 'react-toast-notifications'
 import {userService} from '../services/UserService'
 import {storageRef} from '../init-fcm'
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -39,6 +40,8 @@ function LoginPage({clientToken}) {
         facingMode: 'user'
     }
 
+    const { addToast } = useToasts()
+
     const capturePhoto = () => {
         const photoBase64 = webcamRef.current.getScreenshot({width: 704, height: 800})
         setPhotoBase64(photoBase64)
@@ -69,11 +72,19 @@ function LoginPage({clientToken}) {
             },
             (error) => {
                 console.log("error:-", error)
+                addToast("Photo Upload Fail", {
+                    appearance: 'error',
+                    autoDismiss: true,
+                })
                 resetLoadingState()
             },
             () => {
                 uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
                     console.log('File available at', downloadURL);
+                    addToast("Photo Upload Success", {
+                        appearance: 'success',
+                        autoDismiss: true,
+                    })
                     setPhotoDownloadUrl(downloadURL)
                     resetLoadingState()
                     goNext()
@@ -90,10 +101,20 @@ function LoginPage({clientToken}) {
         }
         userService.loginUser(payload)
             .then(response => {
-                if (response.status === 200) goNext()
-                else console.log('Something went wrong.')
+                if (response.status === 200) {goNext()}
+                else {
+                    console.log('Something went wrong.')
+                    addToast("Something went wrong.", {
+                        appearance: 'error',
+                        autoDismiss: true,
+                    })
+                }
             }).catch(error => {
             console.log(error)
+            addToast("Error occurred on login", {
+                appearance: 'error',
+                autoDismiss: true,
+            })
         })
     }
 
