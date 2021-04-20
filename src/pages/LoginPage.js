@@ -328,7 +328,7 @@ function LoginPage({clientToken}) {
                 <div id='footerLinks' className='floatReverse'>
                     <div><span id='copyright'>© 2021 Facial Barnacle</span><a id='helpDesk'
                                                                               className='pageLink footerLink'
-                                                                              href='mailto:rowlandotirnoo@gmail.com'>Help &amp; Support</a>
+                                                                              href='mailto:rowlandotienoo@gmail.com'>Help &amp; Support</a>
                     </div>
                 </div>
             </footer>
