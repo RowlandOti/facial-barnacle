@@ -1,5 +1,6 @@
 import firebase from "firebase/app"
 import "firebase/messaging";
+import "firebase/storage";
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -14,5 +15,7 @@ const firebaseConfig = {
 
 const app = firebase.initializeApp(firebaseConfig)
 const messaging = firebase.messaging(app)
+const storageRef = firebase.storage();
 
-export { messaging }
+
+export { messaging , storageRef}
