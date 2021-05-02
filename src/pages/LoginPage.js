@@ -1,5 +1,5 @@
 import '../App.css';
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import useStateWithRef from 'react-usestateref'
 import {useToasts} from 'react-toast-notifications'
 import {userService} from '../services/UserService'
@@ -17,7 +17,7 @@ function LoginPage({clientToken}) {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.addEventListener('message', (message) => {
             let state = message.data['firebase-messaging-msg-data'].data.authorized
-            setCurrentStep(7)
+            setCurrentStep(8)
             setApprovalState(state === 'true')
         });
     }
@@ -30,9 +30,19 @@ function LoginPage({clientToken}) {
     const [photoDownloadUrl, setPhotoDownloadUrl, photoDownloadUrlRef] = useStateWithRef('')
     const [uploading, setUploading, uploadingRef] = useStateWithRef(false);
     const [uploadProgress, setUploadProgress, uploadProgressRef] = useStateWithRef(0);
-    const [currentStep, setCurrentStep] = useState(0)
+    const [currentStep, setCurrentStep, currentStepRef] = useStateWithRef(1)
     const [approvalState, setApprovalState] = useState(false)
-    const [isForwardAnim, setIsForwardAnim] = useState(false)
+    const [isForwardAnim, setIsForwardAnim, isForwardAnimRef] = useStateWithRef(false)
+
+    useEffect(() => {
+        if (currentStepRef.current === 7) {
+            setTimeout(() => {
+                setCurrentStep(currentStep + 1)
+                goNext()
+                console.log("Verification done in step==", currentStepRef.current)
+            }, 5000)
+        }
+    });
 
     const videoConstraints = {
         width: 352,
@@ -103,6 +113,7 @@ function LoginPage({clientToken}) {
             .then(response => {
                 console.log("Login Res ==== : ", response);
                 if (response.status === 200) {
+                    setApprovalState(true)
                     goNext()
                 } else {
                     console.log('Something went wrong and we dont know ==', response)
@@ -114,6 +125,7 @@ function LoginPage({clientToken}) {
             }).catch(error => {
                 if (error.response.status === 401) {
                     console.log('Login Unauthorized ==', error)
+                    setApprovalState(false)
                     addToast("Unauthorised : User unknown", {
                         appearance: 'error',
                         autoDismiss: true,
@@ -136,18 +148,17 @@ function LoginPage({clientToken}) {
 
     const goNext = () => {
         setIsForwardAnim(true)
-        if (currentStep === 6) {
-            setTimeout(function () {
-                goNext()
-            }, 5000)
+        if (currentStepRef.current === 8) {
+            console.log("End of steps==", currentStepRef.current)
+        } else {
+            setCurrentStep(currentStep + 1)
+            console.log(`Current step sequence== ${currentStep} -> ${currentStepRef.current}`)
         }
-        if (currentStep === 7) return
-        else setCurrentStep(currentStep + 1)
     }
 
     const goBack = () => {
         setIsForwardAnim(false)
-        if (currentStep === 0) return
+        if (currentStepRef.current === 1) return
         else setCurrentStep(currentStep - 1)
     }
 
@@ -314,34 +325,34 @@ function LoginPage({clientToken}) {
     const transitions = useTransition(currentStep, null, {
         from: {
             opacity: 0,
-            transform: isForwardAnim ? `translate(300px, 0px)` : `translate(-300px, 0px)`,
+            transform: isForwardAnimRef.current ? `translate(300px, 0px)` : `translate(-300px, 0px)`,
             position: 'absolute'
         },
         enter: {opacity: 1, transform: `translate(0px, 0px)`, position: 'relative'},
         leave: {
             opacity: 0,
-            transform: isForwardAnim ? `translate(-300px, 0px)` : `translate(300px, 0px)`,
+            transform: isForwardAnimRef.current ? `translate(-300px, 0px)` : `translate(300px, 0px)`,
             position: 'absolute'
         },
     })
 
     const ViewGenerator = ({item}) => {
         switch (item) {
-            case 0:
-                return <FirstView/>
             case 1:
-                return <SecondView/>
+                return <FirstView/>
             case 2:
-                return <ThirdView/>
+                return <SecondView/>
             case 3:
-                return <FourthView/>
+                return <ThirdView/>
             case 4:
-                return <FifthView/>
+                return <FourthView/>
             case 5:
-                return <SixthView/>
+                return <FifthView/>
             case 6:
-                return <SeventhView/>
+                return <SixthView/>
             case 7:
+                return <SeventhView/>
+            case 8:
                 return <EighthView/>
             default:
                 return <FirstView/>
@@ -351,11 +362,11 @@ function LoginPage({clientToken}) {
     return (
         <div style={{backgroundImage: `url(${BgImage})`}} className='signin-page'>
             <div className='middle'>
-                <div className='signin-box' key={currentStep}>
+                <div className='signin-box' key={currentStepRef.current}>
                     <img src={MSLogo} className='microsoftLogo' alt='microsoft'/>
                     {transitions.map(({item, key, props}) => (
                         <animated.div key={key} style={props}>
-                            <ViewGenerator item={currentStep}/>
+                            <ViewGenerator item={currentStepRef.current}/>
                         </animated.div>
                     ))}
                 </div>
