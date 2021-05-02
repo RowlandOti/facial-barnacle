@@ -1,6 +1,5 @@
-import axios from 'axios';
+import csrf_axios from 'axios';
 import Endpoints from './Endpoints';
-import {storageRef} from "../init-fcm";
 
 export const userService = {
     loginUser
@@ -8,5 +7,5 @@ export const userService = {
 
 function loginUser(payload) {
     const url = Endpoints.LOGIN
-    return axios.post(url, payload)
+    return csrf_axios.post(url, payload)
 }

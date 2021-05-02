@@ -1,7 +1,7 @@
 import '../App.css';
 import React, {useState} from 'react'
 import useStateWithRef from 'react-usestateref'
-import { useToasts } from 'react-toast-notifications'
+import {useToasts} from 'react-toast-notifications'
 import {userService} from '../services/UserService'
 import {storageRef} from '../init-fcm'
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -40,7 +40,7 @@ function LoginPage({clientToken}) {
         facingMode: 'user'
     }
 
-    const { addToast } = useToasts()
+    const {addToast} = useToasts()
 
     const capturePhoto = () => {
         const photoBase64 = webcamRef.current.getScreenshot({width: 704, height: 800})
@@ -96,26 +96,37 @@ function LoginPage({clientToken}) {
     const performLogin = () => {
         const payload = {
             email: email,
-            photo: photoDownloadUrl,
+            photoDownloadUrl: photoDownloadUrl,
             clientToken: clientToken
         }
         userService.loginUser(payload)
             .then(response => {
-                if (response.status === 200) {goNext()}
-                else {
-                    console.log('Something went wrong.')
-                    addToast("Something went wrong.", {
+                console.log("Login Res ==== : ", response);
+                if (response.status === 200) {
+                    goNext()
+                } else {
+                    console.log('Something went wrong and we dont know ==', response)
+                    addToast("Something went wrong and we don't know", {
                         appearance: 'error',
                         autoDismiss: true,
                     })
                 }
             }).catch(error => {
-            console.log(error)
-            addToast("Error occurred on login", {
-                appearance: 'error',
-                autoDismiss: true,
-            })
-        })
+                if (error.response.status === 401) {
+                    console.log('Login Unauthorized ==', error)
+                    addToast("Unauthorised : User unknown", {
+                        appearance: 'error',
+                        autoDismiss: true,
+                    })
+                } else {
+                    console.log("Login Error: ====", error);
+                    addToast("Error occurred on login", {
+                        appearance: 'error',
+                        autoDismiss: true,
+                    })
+                }
+            }
+        )
     }
 
     const updateEmail = (event) => {
@@ -125,9 +136,13 @@ function LoginPage({clientToken}) {
 
     const goNext = () => {
         setIsForwardAnim(true)
+        if (currentStep === 6) {
+            setTimeout(function () {
+                goNext()
+            }, 5000)
+        }
         if (currentStep === 7) return
         else setCurrentStep(currentStep + 1)
-
     }
 
     const goBack = () => {
