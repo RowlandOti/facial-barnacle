@@ -126,6 +126,7 @@ function LoginPage({clientToken}) {
                 if (error.response.status === 401) {
                     console.log('Login Unauthorized ==', error)
                     setApprovalState(false)
+                    goNext()
                     addToast("Unauthorised : User unknown", {
                         appearance: 'error',
                         autoDismiss: true,
